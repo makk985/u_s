@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+
+.env
+
+.cache/
+.tmp/
+temp/
+
+media/
+
+db.sqlite3
+
+migrations/

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{%  block button %}
+<a href="{% url 'home' %}"><button>HOME</button></a>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Login</h2>
+    <form method="POST" class="signup-form">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="form-errors">
+                Invalid email or password. Please try again.
+            </div>
+        {% endif %}
+
+        <div class="form-row">
+            <label for="id_email">Email:</label>
+            <input type="email" name="email" id="id_email" required autofocus>
+        </div>
+
+        <div class="form-row">
+            <label for="id_password">Password:</label>
+            <input type="password" name="password" id="id_password" required>
+        </div>
+
+        <div class="button-group">
+            <button type="submit">Log In</button>
+        </div>
+    </form>
+    
+    <p class="login-link">
+        Don't have an account? 
+        <a href="{% url 'signup' %}">Create one</a>
+    </p>
+</div>
+{% endblock %}

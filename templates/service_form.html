@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%  block button %}
+<a href="{% url 'home' %}"><button>HOME</button></a>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Service Request Form</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="form-errors">
+                Please correct the errors below
+            </div>
+        {% endif %}
+        
+        <div class="form-row">
+            <label for="{{ form.service_type.id_for_label }}">Service Type:</label>
+            <select name="service_type" id="{{ form.service_type.id_for_label }}">
+                <option value="type1" {% if form.service_type.value == 'type1' %}selected{% endif %}>Type 1</option>
+                <option value="type2" {% if form.service_type.value == 'type2' %}selected{% endif %}>Type 2</option>
+                <option value="type3" {% if form.service_type.value == 'type3' %}selected{% endif %}>Type 3</option>
+            </select>
+            {{ form.service_type.errors }}
+        </div>
+        
+        <div class="form-row">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+        
+        <div class="form-row">
+            <label for="{{ form.files.id_for_label }}">Attach Files:</label>
+            {{ form.files }}
+            {{ form.files.errors }}
+        </div>
+        
+        <button type="submit">Submit Request</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas utility</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <header class="header">
+        <h1>Gas utility service</h1>
+    </header>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block button %}
+    <nav class="nav-container">
+        <div class="button-group">
+            {% if user.is_authenticated %}
+            <a href="{% url 'service_request' %}"><button>Request Service</button></a>
+            {% endif %}
+            <a href="{% url 'track_request' %}"><button>Track Request</button></a>
+        </div>
+        
+        <div class="button-group">
+            {% if user.is_authenticated %}
+                <span class="welcome-msg">Welcome, {{ user.full_name }}</span>
+                <a href="{% url 'profile' %}"><button>View Profile</button></a>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                {# Show these when user is not logged in #}
+                <a href="{% url 'login' %}"><button>Login</button></a>
+                <a href="{% url 'signup' %}"><button>Customer signup</button></a>
+            {% endif %}
+        </div>
+    </nav>
+    {% endblock %}
+
+{% block body %}
+{% if user.is_authenticated and service_requests %}
+<div class="service-requests">
+    <h2>Your Service Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Request #</th>
+                <th>Status</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in service_requests %}
+            <tr>
+                <td>{{ req.ser_req_no }}</td>
+                <td class="status-{{ req.status }}">{{ req.get_status_display }}</td>
+                <td>{{ req.note|default:"No updates yet" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

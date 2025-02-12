@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{%  block button %}
+<a href="{% url 'home' %}"><button>HOME</button></a>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Track Service Request</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <label>Enter Service Request No/Account No/Email:</label>
+            <input type="text" name="search_query" required>
+        </div>
+        <button type="submit">Track</button>
+    </form>
+
+    {% if service_requests %}
+    <div class="request-details">
+        {% for req in service_requests %}
+        <div class="detail-card">
+            <h3>Service Request #{{ req.ser_req_no }}</h3>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="status-{{ req.status }}">{{ req.get_status_display }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Service Type:</span>
+                {{ req.get_service_type_display }}
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Description:</span>
+                {{ req.description }}
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Latest Note:</span>
+                {{ req.note|default:"No updates available" }}
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Submitted On:</span>
+                {{ req.created_at|date:"M d, Y H:i" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif request.method == 'POST' %}
+    <p class="no-results">No service requests found matching your search.</p>
+    {% endif %}
+</div>
+{% endblock %}

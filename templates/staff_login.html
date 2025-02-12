@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas utility</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+{% block content %}
+<body>
+<header class="header">
+    <h1>Gas utility service</h1>
+</header>
+<div class="nav-container">
+    <h2>Staff Dashboard</h2>
+    <div class="button-group">
+        <span class="welcome-msg">Welcome, {{ user.full_name }}</span>
+        <a href="{% url 'profile' %}"><button>View Profile</button></a>
+        <a href="{% url 'logout' %}" ><button> SignOut</button></a>
+    </div>
+</div>
+
+<div class="service-requests">
+    <form method="GET" action="{% url 'staff_dashboard' %}" class="form-container">
+        <input type="text" name="q" placeholder="Search by Ser_Req_No/Account No/Email" 
+               value="{{ search_query }}" class="form-row input">
+        <button type="submit">Search</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Request No</th>
+                <th>Account No</th>
+                <th>Service Type</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Files</th>
+                <th>Notes</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in service_requests %}
+            <tr>
+                <form method="POST" action="{% url 'service_update' req.pk %}">
+                    {% csrf_token %}
+                    <td>{{ req.ser_req_no }}</td>
+                    <td>{{ req.user.util_acc_no }}</td>
+                    <td>{{ req.get_service_type_display }}</td>
+                    <td>
+                        <select name="status" class="status-{{ req.status }}">
+                            {% for value, display in req.STATUS_CHOICES %}
+                            <option value="{{ value }}" {% if req.status == value %}selected{% endif %}>
+                                {{ display }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>{{ req.description|truncatechars:50 }}</td>
+                    <td>
+                        {% if req.files %}
+                        <a href="{{ req.files.url }}" target="_blank" class="file-link">
+                            View File
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td><textarea name="note" rows="2">{{ req.note }}</textarea></td>
+                    <td>{{ req.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <button type="submit">Update</button>
+                    </td>
+                </form>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="no-results">No service requests found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+{% endblock %}
